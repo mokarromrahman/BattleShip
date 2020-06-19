@@ -26,6 +26,40 @@ namespace BattleShip
             MouseClick += Form1_MouseClick;
             _tblPanel.MouseClick += _tblPanel_MouseClick;
             Load += Form1_Load;
+
+            //Host button
+            _btnHost.Click += _btnHost_Click;
+
+            //Connect button
+            _btnConnect.Click += _btnConnect_Click;
+        }
+
+        //Connect to server
+        private void _btnConnect_Click(object sender, EventArgs e)
+        {
+            //Connect to  the server
+                //check if ipaddress
+                    //connect
+                        //new socket
+                        //begin connect
+                            //callback connect
+                                //end connect
+                                //success/failure
+        }
+
+        //Turns this machine into a server
+        private void _btnHost_Click(object sender, EventArgs e)
+        {
+            //Start listening for client connection
+                //create new socket
+                //bind
+                //listen
+                //begin accept
+                    //accept callback receives a socket
+                        //socket is sent to handle accept method
+                            //sets the socket to the global socket
+                            //start the thread
+                            //start the client connection to this server
         }
 
         private void Form1_Load(object sender, EventArgs e)

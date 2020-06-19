@@ -18,11 +18,16 @@ namespace BattleShip
             originalColor = color;
         }
 
-        protected override void OnMouseHover(EventArgs e)
+        protected override void OnMouseEnter(EventArgs e)
         {
-            base.OnMouseHover(e);
+            base.OnMouseEnter(e);
             this.BackColor = Color.Yellow;
         }
+        //protected override void OnMouseHover(EventArgs e)
+        //{
+        //    base.OnMouseHover(e);
+        //    this.BackColor = Color.Yellow;
+        //}
 
         protected override void OnMouseLeave(EventArgs e)
         {
