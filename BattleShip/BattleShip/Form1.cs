@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net;
+using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,13 +40,67 @@ namespace BattleShip
         private void _btnConnect_Click(object sender, EventArgs e)
         {
             //Connect to  the server
-                //check if ipaddress
-                    //connect
-                        //new socket
-                        //begin connect
-                            //callback connect
-                                //end connect
-                                //success/failure
+
+            //create a new socket
+            Socket connectSocket = null;
+
+            //ensure that the supplied string is an IPAddress
+            if (IPAddress.TryParse(tbxIPAddress.Text, out IPAddress address))
+            {
+                //if there supplied socket is null....
+                if (connectSocket is null)
+                {
+                    //used for timing the progress bar for timeout
+                    System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                    stopwatch.Restart();
+
+                    //build a client socket
+                    connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                    try
+                    {
+                        //attempt a connection to the server
+                        connectSocket.BeginConnect(tbxIPAddress.Text, Convert.ToInt32(tbxPort.Text), ConnectComplete, ConnectSocket);
+
+                        //wait 10 seconds, then inform the user that the connection attempt has timed out
+                        while (pbrConnectionTimer.Value < pbrConnectionTimer.Maximum && !connectSocket.Connected)
+                        {
+                            //move the progress bar every 500 ms
+                            if (stopwatch.ElapsedMilliseconds > 500)
+                            {
+                                pbrConnectionTimer.PerformStep();
+                                stopwatch.Restart();
+                            }
+
+                            //display timeout message
+                            if (pbrConnectionTimer.Value >= pbrConnectionTimer.Maximum)
+                            {
+                                MessageBox.Show("Connection Timeout");
+                                return;
+                            }
+
+                        }
+                    }
+                    catch (Exception eMessage)
+                    {
+                        MessageBox.Show(eMessage.Message);
+                    }
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Invlalid IP Address");
+                tbxIPAddress.Text = "";
+            }
+            //check if ipaddress
+
+            //connect
+            //new socket
+            //begin connect
+            //callback connect
+            //end connect
+            //success/failure
         }
 
         //Turns this machine into a server
