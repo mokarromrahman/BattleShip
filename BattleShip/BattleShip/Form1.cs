@@ -45,7 +45,7 @@ namespace BattleShip
             Socket connectSocket = null;
 
             //ensure that the supplied string is an IPAddress
-            if (IPAddress.TryParse(tbxIPAddress.Text, out IPAddress address))
+            if (IPAddress.TryParse(_tbIPAddress.Text, out IPAddress address))
             {
                 //if there supplied socket is null....
                 if (connectSocket is null)
@@ -60,26 +60,26 @@ namespace BattleShip
                     try
                     {
                         //attempt a connection to the server
-                        connectSocket.BeginConnect(tbxIPAddress.Text, Convert.ToInt32(tbxPort.Text), ConnectComplete, ConnectSocket);
+                        connectSocket.BeginConnect(_tbIPAddress.Text, 1666, ConnectComplete, connectSocket);
 
-                        //wait 10 seconds, then inform the user that the connection attempt has timed out
-                        while (pbrConnectionTimer.Value < pbrConnectionTimer.Maximum && !connectSocket.Connected)
-                        {
-                            //move the progress bar every 500 ms
-                            if (stopwatch.ElapsedMilliseconds > 500)
-                            {
-                                pbrConnectionTimer.PerformStep();
-                                stopwatch.Restart();
-                            }
+                        ////wait 10 seconds, then inform the user that the connection attempt has timed out
+                        //while (pbrConnectionTimer.Value < pbrConnectionTimer.Maximum && !connectSocket.Connected)
+                        //{
+                        //    //move the progress bar every 500 ms
+                        //    if (stopwatch.ElapsedMilliseconds > 500)
+                        //    {
+                        //        pbrConnectionTimer.PerformStep();
+                        //        stopwatch.Restart();
+                        //    }
 
-                            //display timeout message
-                            if (pbrConnectionTimer.Value >= pbrConnectionTimer.Maximum)
-                            {
-                                MessageBox.Show("Connection Timeout");
-                                return;
-                            }
+                        //    //display timeout message
+                        //    if (pbrConnectionTimer.Value >= pbrConnectionTimer.Maximum)
+                        //    {
+                        //        MessageBox.Show("Connection Timeout");
+                        //        return;
+                        //    }
 
-                        }
+                        //}
                     }
                     catch (Exception eMessage)
                     {
@@ -91,7 +91,7 @@ namespace BattleShip
             else
             {
                 MessageBox.Show("Invlalid IP Address");
-                tbxIPAddress.Text = "";
+                _tbIPAddress.Text = "";
             }
             //check if ipaddress
 
@@ -101,6 +101,32 @@ namespace BattleShip
             //callback connect
             //end connect
             //success/failure
+        }
+
+        /// <summary>
+        /// callback for the BeginConnect call 
+        /// </summary>
+        /// <param name="ar">BeginConnect response</param>
+        private void ConnectComplete(IAsyncResult ar)
+        {
+            //unpack object as a socket
+            Socket sock = (Socket)(ar.AsyncState);
+
+            //Invoke(new delVoidInt(UpdateProgress), pbrConnectionTimer.Maximum);
+
+            ////end the pending asynchronous connection request and update the UI
+            //try
+            //{
+            //    sock.EndConnect(ar);
+
+            //    Invoke(new delVoidBoolString(ConnectResult), true, "Success");
+
+            //}
+            //catch (Exception eMessage)
+            //{
+            //    //something bad happened, should deal with it
+            //    Invoke(new delVoidBoolString(ConnectResult), false, eMessage.Message);
+            //}
         }
 
         //Turns this machine into a server
