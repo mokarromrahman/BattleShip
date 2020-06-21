@@ -16,6 +16,8 @@ namespace BattleShip
     public partial class Form1 : Form
     {
         int number = 0;
+        Socket _clientSocket = null;
+
 
         public Form1()
         {
@@ -42,25 +44,25 @@ namespace BattleShip
             //Connect to  the server
 
             //create a new socket
-            Socket connectSocket = null;
+            //Socket connectSocket = null;
 
             //ensure that the supplied string is an IPAddress
             if (IPAddress.TryParse(_tbIPAddress.Text, out IPAddress address))
             {
                 //if there supplied socket is null....
-                if (connectSocket is null)
+                if (_clientSocket is null)
                 {
                     //used for timing the progress bar for timeout
                     System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
                     stopwatch.Restart();
 
                     //build a client socket
-                    connectSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                     try
                     {
                         //attempt a connection to the server
-                        connectSocket.BeginConnect(_tbIPAddress.Text, 1666, ConnectComplete, connectSocket);
+                        _clientSocket.BeginConnect(_tbIPAddress.Text, 1666, ConnectComplete, _clientSocket);
 
                         ////wait 10 seconds, then inform the user that the connection attempt has timed out
                         //while (pbrConnectionTimer.Value < pbrConnectionTimer.Maximum && !connectSocket.Connected)
@@ -114,19 +116,19 @@ namespace BattleShip
 
             //Invoke(new delVoidInt(UpdateProgress), pbrConnectionTimer.Maximum);
 
-            ////end the pending asynchronous connection request and update the UI
-            //try
-            //{
-            //    sock.EndConnect(ar);
+            //end the pending asynchronous connection request and update the UI
+            try
+            {
+                sock.EndConnect(ar);
 
-            //    Invoke(new delVoidBoolString(ConnectResult), true, "Success");
+                MessageBox.Show("Connection Successful!");
 
-            //}
-            //catch (Exception eMessage)
-            //{
-            //    //something bad happened, should deal with it
-            //    Invoke(new delVoidBoolString(ConnectResult), false, eMessage.Message);
-            //}
+            }
+            catch (Exception eMessage)
+            {
+                //something bad happened, should deal with it
+                MessageBox.Show("Connection Failed..." + eMessage);
+            }
         }
 
         //Turns this machine into a server
