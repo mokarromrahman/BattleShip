@@ -17,7 +17,7 @@ namespace BattleShip
     {
         int number = 0;
         Socket _clientSocket = null;
-
+        Socket _serverSocket = null;
 
         public Form1()
         {
@@ -135,6 +135,7 @@ namespace BattleShip
         private void _btnHost_Click(object sender, EventArgs e)
         {
             //Start listening for client connection
+            StartHosting();
                 //create new socket
                 //bind
                 //listen
@@ -146,6 +147,84 @@ namespace BattleShip
                             //start the client connection to this server
         }
 
+        //Start listening for client connection
+        private void StartHosting()
+        {
+            //create new socket
+            try
+            {
+                _serverSocket = new Socket(
+                    AddressFamily.InterNetwork,
+                    SocketType.Stream,
+                    ProtocolType.Tcp);
+            }
+            catch (SocketException ex)
+            {
+                MessageBox.Show(
+                    ex.Message, 
+                    "Connection Error", 
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Warning);
+            }
+
+            //bind the socket to port 1666
+            try
+            {
+                _serverSocket.Bind(new IPEndPoint(IPAddress.Any, 1666));
+            }
+            catch(SocketException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Connection Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+
+            //start listen
+            try
+            {
+                _serverSocket.Listen(5);
+            }
+            catch(SocketException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Connection Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            //begin accept and call the cbAccept method with the listening port
+            try
+            {
+                _serverSocket.BeginAccept(cbAccept, _serverSocket);
+            }
+            catch(SocketException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Connection Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+                //accept callback receives a socket
+                    //socket is sent to handle accept method
+                        //sets the socket to the global socket
+                        //start the thread
+                        //start the client connection to this server
+        }
+
+        private void cbAccept(IAsyncResult ar)
+        {
+            //pull the listening socket from the args (state)
+            //do this so that you are not directly using members (cross thread)
+            Socket listeningSock = (Socket)ar.AsyncState;
+
+            try
+            {
+
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             bool red = true;
